@@ -1,4 +1,9 @@
-function gauss = getcoeff_HCN(debiasedhalldata,probepos,probemask)
+function gauss = gcoeff3m(debiasedhalldata,probepos);
+if ~(nargin==2)
+	error('Usage: gausscoeff = gcoeff3m(debiasedhalldata,probepos)');
+end
+
+probemask = ones(31,1);
 
 %Title: getcoeff
 %Author: Matthew Adams
