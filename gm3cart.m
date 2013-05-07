@@ -18,7 +18,7 @@
 %this is to help vectorize the overall code & allow 1D,2D or 3D input arrays of points
 %============
 %this line is a very minor change to test git
-
+%this is on the "DPL shared" branch.
 
 function [Sx Sy Sz] = gm3cart(n,x,y,z);
 if ~(nargin==4)
