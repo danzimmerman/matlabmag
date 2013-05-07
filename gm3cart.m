@@ -17,6 +17,7 @@
 %modified 050313 11:46am by Axl to shape vectors or matrices so that legendre() fits shape of other things
 %this is to help vectorize the overall code & allow 1D,2D or 3D input arrays of points
 %============
+%this line is a very minor change to test git
 
 
 function [Sx Sy Sz] = gm3cart(n,x,y,z);
