@@ -1,16 +1,17 @@
 %notes: realized that initial point cloud is drifting at \omega when it should really drift at \omega/m
-
+%here's a new top view
 set(0,'defaultfigurevisible','off');
 load /data/3m/111612/img_n430_lambda_p43/finemoviedata.mat
 [bl al] = butter(2,1/128,'low');
-DSFAC = 5;
+DSFAC = 10;
+NSPHERE = 8;
 gf = filtfilt(bl,al,gm);
 gd = downsample(gf(2000:12000,:),DSFAC);
 td = downsample(tm(2000:12000,:),DSFAC);
-DIRNAME = '/data/3m/111612/img_n430_lambda_p43/spag14';
-AXLIM=3;
-STEPSIZE = 0.01;
-NEGINTFAC = 10;
+DIRNAME = '/data/3m/111612/img_n430_lambda_p43/spag15';
+AXLIM=5;
+STEPSIZE = 0.01; %field line integration step size
+NEGINTFAC = 1; %factor for inward integration
 NSTART = 1; %if you need to pause and restart
 if exist(DIRNAME)
 	cd(DIRNAME)
@@ -21,7 +22,7 @@ else
 	cd(DIRNAME)
 	system(['cp /home/axl/matlabgit/mag/ron43mov.m ' DIRNAME '/thisinstance_ron43mov.m'])
 end
-[x0 y0 z0] = sphere(6);
+[x0 y0 z0] = sphere(NSPHERE);
 WAVEFREQ = 0.64666667;
 m = 2;
 DRIFTDIR = 1; %(CCW from top bs3msphere)
@@ -61,7 +62,7 @@ for j = NSTART:length(td)
 	plot3((maskn.*squeeze(xt)),(maskn.*squeeze(yt)),(maskn.*squeeze(zt)),'color',[0 0 0.8],'linewidth',2);
 	plot3([0 0],[0 0],[-1.5 1.5],'linewidth',3);
 	plot3(0,0,1.5,'^k','markersize',6,'markerfacecolor','k');
-	%set(gca,'view',[0 90]); %top view!
+	set(gca,'view',[0 90]); %top view!
 	xlim([-AXLIM AXLIM]); ylim([-AXLIM AXLIM]); zlim([-AXLIM AXLIM]);
 	fn = sprintf([DIRNAME '/%05d.png'],j);
 	saveas(figj,fn);
