@@ -1,13 +1,16 @@
-%notes: same setting as for spag11 but with double resolution integrations for stability test
+%notes: realized that initial point cloud is drifting at \omega when it should really drift at \omega/m
 
 set(0,'defaultfigurevisible','off');
 load /data/3m/111612/img_n430_lambda_p43/finemoviedata.mat
 [bl al] = butter(2,1/128,'low');
+DSFAC = 5;
 gf = filtfilt(bl,al,gm);
-gd = gf(2000:12000,:);
-td = tm(2000:12000,:);
-DIRNAME = '/data/3m/111612/img_n430_lambda_p43/spag13';
+gd = downsample(gf(2000:12000,:),DSFAC);
+td = downsample(tm(2000:12000,:),DSFAC);
+DIRNAME = '/data/3m/111612/img_n430_lambda_p43/spag14';
 AXLIM=3;
+STEPSIZE = 0.01;
+NEGINTFAC = 10;
 NSTART = 1; %if you need to pause and restart
 if exist(DIRNAME)
 	cd(DIRNAME)
@@ -20,10 +23,11 @@ else
 end
 [x0 y0 z0] = sphere(6);
 WAVEFREQ = 0.64666667;
+m = 2;
 DRIFTDIR = 1; %(CCW from top bs3msphere)
 NUMTIMESTEP = length(td);
 td0 = td-td(1);
-thetat = repmat(2*pi*0.646666667*td0,[1 size(x0)]);
+thetat = repmat(2*pi*WAVEFREQ*td0/m,[1 size(x0)]);
 
 x0t = ones([length(td) size(x0)]);
 y0t = ones([length(td) size(x0)]);
@@ -43,14 +47,14 @@ for j = NSTART:length(td)
 	x0j = squeeze(x0t(j,:,:));
 	y0j = squeeze(y0t(j,:,:));
 	z0j = squeeze(z0t(j,:,:));
-	[xt yt zt Bxt Byt Bzt xll yll zll] = bline_spag(gd(j,:),3*x0j(:),3*y0j(:),3*z0j(:),0.005,5000,-1,1,5);
+	[xt yt zt Bxt Byt Bzt xll yll zll] = bline_spag(gd(j,:),3*x0j(:),3*y0j(:),3*z0j(:),STEPSIZE*NEGINTFAC,5000,-1,1,5);
 	rll = sqrt(xll.^2+yll.^2+zll.^2);
 	rlmin = min(rll(~isnan(rll)))
 	%rll = rll/rlmin;
 	xll = 1.01*xll(1<rll<1.05)./rll;
 	yll = 1.01*yll(1<rll<1.05)./rll;
 	zll = 1.01*zll(1<rll<1.05)./rll;
-	[xt yt zt Bxt Byt Bzt xlast ylast zlast] = bline_spag(gd(j,:),xll(:),yll(:),zll(:),0.005,5000,1,1,5);
+	[xt yt zt Bxt Byt Bzt xlast ylast zlast] = bline_spag(gd(j,:),xll(:),yll(:),zll(:),STEPSIZE,5000,1,1,5);
 	[r theta phi Br Btheta Bphi Bmag maskp maskn] = bcart2bsph_linemasks(xt,yt,zt,Bxt,Byt,Bzt);
 	hold on
 	plot3((maskp.*xt),(maskp.*squeeze(yt)),(maskp.*squeeze(zt)),'color',[0.8 0 0],'linewidth',2);
