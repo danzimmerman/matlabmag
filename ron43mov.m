@@ -1,7 +1,24 @@
+%notes: same setting as for spag11 but with double resolution integrations for stability test
 
-load moviedata.mat
+set(0,'defaultfigurevisible','off');
+load /data/3m/111612/img_n430_lambda_p43/finemoviedata.mat
+[bl al] = butter(2,1/128,'low');
+gf = filtfilt(bl,al,gm);
+gd = gf(2000:12000,:);
+td = tm(2000:12000,:);
+DIRNAME = '/data/3m/111612/img_n430_lambda_p43/spag13';
+AXLIM=3;
+NSTART = 1; %if you need to pause and restart
+if exist(DIRNAME)
+	cd(DIRNAME)
+	system(['cp /home/axl/matlabgit/mag/ron43mov.m ' DIRNAME '/thisinstance_ron43mov.m'])
 
-[x0 y0 z0] = sphere(10);
+else
+	mkdir(DIRNAME)
+	cd(DIRNAME)
+	system(['cp /home/axl/matlabgit/mag/ron43mov.m ' DIRNAME '/thisinstance_ron43mov.m'])
+end
+[x0 y0 z0] = sphere(6);
 WAVEFREQ = 0.64666667;
 DRIFTDIR = 1; %(CCW from top bs3msphere)
 NUMTIMESTEP = length(td);
@@ -17,29 +34,38 @@ x0t(j,:,:) = x0.*squeeze(cos(thetat(j,:,:)))-y0.*squeeze(sin(thetat(j,:,:)));
 y0t(j,:,:) = x0.*squeeze(sin(thetat(j,:,:)))+y0.*squeeze(cos(thetat(j,:,:)));
 z0t(j,:,:) = z0;
 end
+ttotal = 0
 
-for j = 1:length(td)
-	bs3msphere(gd(j,:),200);
+for j = NSTART:length(td)
+	tic
+	[b figj] = bs3msphere(gd(j,:),200);
 	colormap redblue; hold on;
 	x0j = squeeze(x0t(j,:,:));
 	y0j = squeeze(y0t(j,:,:));
 	z0j = squeeze(z0t(j,:,:));
-	[xt yt zt Bxt Byt Bzt xll yll zll] = bline_spag(gd(j,:),4*x0j(:),4*y0j(:),4*z0j(:),0.2,5000,-1,1,5);
-	figure; plot3(xt,yt,zt);
+	[xt yt zt Bxt Byt Bzt xll yll zll] = bline_spag(gd(j,:),3*x0j(:),3*y0j(:),3*z0j(:),0.005,5000,-1,1,5);
 	rll = sqrt(xll.^2+yll.^2+zll.^2);
-	xll = xll(0.99<rll<1.01);
-	yll = yll(0.99<rll<1.01);
-	zll = zll(0.99<rll<1.01);
-	zls = size(zll)
-	[xt yt zt Bxt Byt Bzt xlast ylast zlast] = bline_spag(gd(j,:),squeeze(xll),squeeze(yll),squeeze(zll),0.05,5000,1,1,5);
-	[r theta phi Br Btheta Bphi Bmag maskp maskn] = bcart2bsph_linemasks(squeeze(xt),squeeze(yt),squeeze(zt),squeeze(Bxt),squeeze(Byt),squeeze(Bzt));
+	rlmin = min(rll(~isnan(rll)))
+	%rll = rll/rlmin;
+	xll = 1.01*xll(1<rll<1.05)./rll;
+	yll = 1.01*yll(1<rll<1.05)./rll;
+	zll = 1.01*zll(1<rll<1.05)./rll;
+	[xt yt zt Bxt Byt Bzt xlast ylast zlast] = bline_spag(gd(j,:),xll(:),yll(:),zll(:),0.005,5000,1,1,5);
+	[r theta phi Br Btheta Bphi Bmag maskp maskn] = bcart2bsph_linemasks(xt,yt,zt,Bxt,Byt,Bzt);
 	hold on
-	xts = size(xt)
-	plot3((maskp.*squeeze(xt)),(maskp.*squeeze(yt)),(maskp.*squeeze(zt)),'color',[0.8 0 0],'linewidth',2);
+	plot3((maskp.*xt),(maskp.*squeeze(yt)),(maskp.*squeeze(zt)),'color',[0.8 0 0],'linewidth',2);
 	plot3((maskn.*squeeze(xt)),(maskn.*squeeze(yt)),(maskn.*squeeze(zt)),'color',[0 0 0.8],'linewidth',2);
-	xlim([-3 3]); ylim([-3 3]); zlim([-3 3]);
-	fn = sprintf('spag2/%05d.png',j);
-	saveas(gcf,fn);
+	plot3([0 0],[0 0],[-1.5 1.5],'linewidth',3);
+	plot3(0,0,1.5,'^k','markersize',6,'markerfacecolor','k');
+	%set(gca,'view',[0 90]); %top view!
+	xlim([-AXLIM AXLIM]); ylim([-AXLIM AXLIM]); zlim([-AXLIM AXLIM]);
+	fn = sprintf([DIRNAME '/%05d.png'],j);
+	saveas(figj,fn);
+	%fndat = sprintf([DIRNAME '/%05d.dat'],j);
+	%unwind(xt,yt,zt,fndat);
 	close
+	tj = toc
+	ttotal = ttotal +tj
+	meant = ttotal/j
 end
-
+set(0,'defaultfigurevisible','on');

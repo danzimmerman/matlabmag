@@ -1,4 +1,4 @@
-function b=bs3msphere(g,npoints,varargin)
+function [b fighandle]=bs3msphere(g,npoints,varargin)
 % b=bs3msphere(g);
 %
 % Given a vector of 24 Gauss coefficients g, bs calculates the spherical
@@ -37,7 +37,7 @@ for ii=1:length(g)
     b=b+g(ii)*gmode3m(ii,r,theta,phi);
 end
 b=b/scalefac;
-figure;
+fighandle = figure;
 surf(xs,ys,zs,b);shading flat;
 set(gca,'DataAspectRatio',[1 1 1],'XTick',[],'YTick',[],'Box','off',...
     'Visible','on','Xlim',[-1.5 1.5],'YLim',[-1.5 1.5],'YDir','normal');
