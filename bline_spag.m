@@ -6,9 +6,9 @@
 %x0,y0,z0 should be all one size. for now they can be 1D vector lists or 2D like meshgrid
 %g is a vector of 24 gauss coefficients
 
-function [xt yt zt Bxt Byt Bzt xlast ylast zlast] = bline_spag_reverse_gauss(g,x0,y0,z0,stepsize,maxnumberofsteps,fieldintdir,MINRADIUS,MAXRADIUS);
+function [xt yt zt Bxt Byt Bzt xlast ylast zlast] = bline_spag(g,x0,y0,z0,stepsize,maxnumberofsteps,fieldintdir,MINRADIUS,MAXRADIUS);
 if ~(nargin==9)
-	error('Usage [xt yt zt Bxt Byt Bzt xlast ylast zlast]=bline_spag_reverse_gauss(g,x0,y0,z0,stepsize,maxnumberofsteps,fieldintdir,MINRADIUS,MAXRADIUS)');
+	error('Usage [xt yt zt Bxt Byt Bzt xlast ylast zlast]=bline_spag(g,x0,y0,z0,stepsize,maxnumberofsteps,fieldintdir,MINRADIUS,MAXRADIUS)');
 end
 
 DELT = stepsize;

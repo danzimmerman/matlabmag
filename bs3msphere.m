@@ -42,6 +42,8 @@ surf(xs,ys,zs,b);shading flat;
 set(gca,'DataAspectRatio',[1 1 1],'XTick',[],'YTick',[],'Box','off',...
     'Visible','on','Xlim',[-1.5 1.5],'YLim',[-1.5 1.5],'YDir','normal');
 axis equal;
+axis off;
+colormap redblue;
 warning(s.state,'MATLAB:divideByZero');
 
 
