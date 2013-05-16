@@ -2,8 +2,7 @@ function [] = unwind(xt,yt,zt, fname)
 
 %if fname specified ends in '.txt' write as ASCII with dlmwrite
 %	otherwise write as 8byte floats in binary 
-%read binary file in python with x = np.fromfile(fname)
-%by David Meichle
+%read binary file in python with x = np.fromfile(fname) 
 
 if( fname( (end-3):end)  == '.txt') 
 ASCII = true;
@@ -12,9 +11,9 @@ ASCII = false;
 end
 
 %make single column
-xt = xt(:); 
-yt = yt(:); 
-zt = zt(:); 
+%sxt = xt(:); 
+%yt = yt(:); 
+%zt = zt(:); 
 
 M = zeros([size(xt),3]); 
 M(:,:,1) = xt; 
@@ -30,20 +29,30 @@ x = zeros([MAXNT*NLINES,3]); %declare variable to hold 1D representation. oversi
 s = 1; 
 for c = 1:3 %choose between X,Y,Z
 s = 1; %reassign s = 1 for loop on c over X,Y,Z coordinates
+
 	for l = 1:NLINES
 		row = M(:,l,c); 
 		inds = find(~isnan(row));
-		xvals = row(inds); 
-		count = length(xvals); 
-		x(s,:) = repmat(count, [1,3]); 
-		rng = (s+1):(s+count); 
-		x(rng,c) = xvals; 
-		s = rng(end) + 1; 
+		if length(inds) > 0
+			xvals = row(inds); 
+			count = length(xvals); 
+			x(s,:) = repmat(count, [1,3]); 
+			rng = (s+1):(s+count); 
+			x(rng,c) = xvals; 
+			s = rng(end) + 1; 
+		end
+
 	end
 end
+ 
+ 
+ %make strictly 1D for easy saving 
+xx = [x(:,1)', x(:,2)', x(:,3)']'
 
-%crop to actual data size. size(x,1) will always be <= MAXNT*NLINES
-x = x(1:(s-3), :);
+
+%%%% read in python with:
+	%x = np.fromfile(fname)
+	%x = np.transpose(np.reshape(x, [3, np.shape(x)[0]/3]) )
 
 %write to file
 if(ASCII)
@@ -51,7 +60,7 @@ if(ASCII)
 	disp(['Done writing to ASCII file: ', fname]);
 else
 	fid = fopen(fname,'w');
-	fwrite(fid, x, 'double');
+	fwrite(fid, xx, 'double');
 	fclose(fid);
 	disp(['Done writing to binary double file: ', fname]);
 end
