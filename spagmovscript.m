@@ -1,14 +1,15 @@
 %notes: realized that initial point cloud is drifting at \omega when it should really drift at \omega/m
 %here's a new top view glatzmaier colors 
 set(0,'defaultfigurevisible','off');
-load /data/axl/rop6data/fullsampmoviedata.mat
-gf = gf(10000:25000,:);
-tq = tq(10000:25000,:);
-DSFAC = 3;
-NSPHERE = 8;
+load /data/3m/082212/movies/fulltqswitchmovdata.mat
+KT = find(tq>53650 & tq<53700); %times between 53650-53700
+gf = gb(KT,:); %gb is bandpass filtered 0.1-6Hz
+tq = tq(KT,:); 
+DSFAC = 10;
+NSPHERE = 6;
 gd = downsample(gf,DSFAC);
 td = downsample(tq,DSFAC);
-DIRNAME = '/data/axl/rop6data/movies/spag2';
+DIRNAME = '/data/3m/082212/movies/spag1';
 AXLIMTOP=5;
 AXLIMSIDE = 3;
 STEPSIZE = 0.01; %field line integration step size
@@ -32,8 +33,8 @@ if ~(exist('side'))
 end
 
 [x0 y0 z0] = sphere(NSPHERE);
-WAVEFREQ = 0.835;
-m = 2;
+WAVEFREQ = 0.2; %drift with the 0.2 wave? who knows
+m = 1;
 DRIFTDIR = -1; %(CCW from top bs3msphere)
 NUMTIMESTEP = length(td);
 td0 = td-td(1);

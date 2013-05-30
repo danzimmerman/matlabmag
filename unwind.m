@@ -1,7 +1,11 @@
 function [] = unwind(xt,yt,zt, fname)
-
-%if fname specified ends in '.txt' write as ASCII with dlmwrite
-%	otherwise write as 8byte floats in binary 
+%
+% David Meichle May 30 2013
+%
+% xt,yt,zt are input lines data
+% fname specifies a file to store the lines data for python to read. 
+% if fname ends in '.txt' it will write an ASCII file with dlmwrite, otherwise 
+%	will print formatted binary 
 %read binary file in python with x = np.fromfile(fname) 
 
 if( fname( (end-3):end)  == '.txt') 
@@ -45,9 +49,10 @@ s = 1; %reassign s = 1 for loop on c over X,Y,Z coordinates
 	end
 end
  
+ x = x( 1:s, :); 
  
  %make strictly 1D for easy saving 
-xx = [x(:,1)', x(:,2)', x(:,3)']'
+xx = [x(:,1)', x(:,2)', x(:,3)']';
 
 
 %%%% read in python with:
