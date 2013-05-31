@@ -4,12 +4,13 @@ set(0,'defaultfigurevisible','off');
 load /data/3m/082212/movies/fulltqswitchmovdata.mat
 KT = find(tq>53650 & tq<53700); %times between 53650-53700
 gf = gb(KT,:); %gb is bandpass filtered 0.1-6Hz
-tq = tq(KT,:); 
+tq = tq(KT,:);
+SAVEDATFILES = 1; %set to 1 for saving, 0 for not
 DSFAC = 10;
 NSPHERE = 6;
 gd = downsample(gf,DSFAC);
 td = downsample(tq,DSFAC);
-DIRNAME = '/data/3m/082212/movies/spag1';
+DIRNAME = '/data/3m/082212/movies/spag2';
 AXLIMTOP=5;
 AXLIMSIDE = 3;
 STEPSIZE = 0.01; %field line integration step size
@@ -31,9 +32,12 @@ end
 if ~(exist('side'))
 	mkdir('side');
 end
+if ~(exist('dave'))
+    mkdir('dave');
+end
 
 [x0 y0 z0] = sphere(NSPHERE);
-WAVEFREQ = 0.2; %drift with the 0.2 wave? who knows
+WAVEFREQ = 0.04; %rough guess from movie
 m = 1;
 DRIFTDIR = -1; %(CCW from top bs3msphere)
 NUMTIMESTEP = length(td);
@@ -81,9 +85,19 @@ for j = NSTART:length(td)
 	xlim([-AXLIMTOP AXLIMTOP]); ylim([-AXLIMTOP AXLIMTOP]); zlim([-AXLIMTOP AXLIMTOP]);
 	fn = sprintf([DIRNAME '/top/%05d.png'],j);
 	saveas(figj,fn);
-	%fndat = sprintf([DIRNAME '/%05d.dat'],j);
-	%unwind(xt,yt,zt,fndat);
-	close
+	if SAVEDATFILES
+		fndat = sprintf([DIRNAME '/dave/%05d.dat'],j);
+		unwind(xt,yt,zt,fndat);
+		close
+	    figure; pcolor(b); 
+	    shading flat
+	    colormap glatzmap
+	    set(gca, 'Units', 'normalized', 'Position', [0 0 1 1])
+	    fnsurf = sprintf([DIRNAME '/dave/%05d.png'],j);
+	    saveas(gcf,fnsurf);
+	    close   
+    end
+    
 	tj = toc
 	ttotal = ttotal +tj
 	meant = ttotal/j
