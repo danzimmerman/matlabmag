@@ -1,7 +1,10 @@
 %this converts x,y,z field line trajectories and their field components into spherical
 %also outputs masks based on radial field for drawing colored lines. 1 if Br is "p"ositive or "n"egative, NaN otherwise
 
-function [r theta phi Br Btheta Bphi Bmag maskp maskn] = bcart2bsph(x,y,z,Bx,By,Bz);
+function [r theta phi Br Btheta Bphi Bmag maskp maskn] = bcart2bsph_linemasks(x,y,z,Bx,By,Bz);
+if ~(nargin==6)
+    error('Usage: [r theta phi Br Btheta Bphi Bmag posrmask negrmask] = bcart2bsph_linemasks(x,y,z,Bx,By,Bz)')
+end
 
 r = sqrt(x.^2+y.^2+z.^2);
 theta = acos(z./r);
