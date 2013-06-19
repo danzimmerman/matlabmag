@@ -20,7 +20,7 @@ ZMAGB = -0.066;
 ZMAGT = 0.066; %+/-6.6cm from equator.
 
 SPHERECOL = -0.7;
-SPHEREICOL = -0.9;
+SPHEREICOL = -0.5;
 PROBECOL = 0.7;
 ISCOL = 0;
 WIRECOL = -0.4;
@@ -38,7 +38,22 @@ LIDTOP = FLANGETOP+.0794;
 
 
 [xs ys zs] = sphere(300); %basic sphere
-
+ppos = probepos;
+Rp = OUTOUTR*ppos(:,1);
+thetap = ppos(:,2);
+phip = ppos(:,3);
+xp = Rp.*sin(thetap).*cos(phip);
+yp = Rp.*sin(thetap).*sin(phip);
+zp = Rp.*cos(thetap);
+[xh yh zh] = sphere(30);
+xh = 0.05*xh;
+yh = 0.05*yh;
+zh = 0.05*zh;
+for j = 1:31
+	xpr{j} = xp(j) + xh;
+	ypr{j} = yp(j) + yh;
+	zpr{j} = zp(j) + zh;
+end
 
 
 
@@ -120,22 +135,7 @@ surf(Mhx,Mhy,Mhz,SPHERECOL*ones(size(Mhz)));
 
 %plot hall sensors as tiny spheres
 
-ppos = probepos;
-Rp = OUTOUTR*ppos(:,1);
-thetap = ppos(:,2);
-phip = ppos(:,3);
-xp = Rp.*sin(thetap).*cos(phip);
-yp = Rp.*sin(thetap).*sin(phip);
-zp = Rp.*cos(thetap);
-[xh yh zh] = sphere(30);
-xh = 0.05*xh;
-yh = 0.05*yh;
-zh = 0.05*zh;
-for j = 1:31
-	xpr{j} = xp(j) + xh;
-	ypr{j} = yp(j) + yh;
-	zpr{j} = zp(j) + zh;
-end
+
 
 for j = 1:31
 	surf(xpr{j},ypr{j},zpr{j},PROBECOL*ones(size(zpr{j}))); shading flat
