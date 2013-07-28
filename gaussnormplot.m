@@ -1,10 +1,10 @@
 %plots gauss coefficients as l*(l+1)*g_lm / B_0
 %param,gauss,and current should be all the same length
 %pass desired gauss coefficients as gaussindex for automatic labeling
-function fighandle = gaussnormplot(param,gauss,gaussindex,current,LFLAG)
+function fighandle = gaussnormplot(param,gauss,gaussindex,current,LFLAG,NEWPLOT)
 
-if ~(nargin==5)
-	error('Usage : fighandle = gaussnormplot(param,gauss,gaussindex,current,LFLAG)')
+if ~(nargin==6)
+	error('Usage : fighandle = gaussnormplot(param,gauss,gaussindex,current,LFLAG,NEWPLOTFLAG)')
 end
 lstruct = load('lvector.mat');
 l = lstruct.l;
@@ -29,7 +29,9 @@ symsize = 8*ones(1,24);
 symsize(23:24) = 10;
 
 syminuse = symbols(gaussindex);
-fighandle = figure; subplot(2,1,1); hold on
+if NEWPLOT
+	fighandle = figure; subplot(2,1,1); hold on
+end
 load sphlabels.mat
 for j = 1:length(gaussindex);
 	if LFLAG
