@@ -10,6 +10,9 @@
 
 
 function dout = debias_magramp(ddb,time,ivec);
+if ~(nargin==3)
+	error('Usage: dout = debias_magramp(ddb,time,ivec)')
+end
 
 temp = load('/data/3m/090612/MAT/ramp_index.mat');
 mpatt = temp.v.BVpatt; %mean voltage pattern, volts of probe response per amp of magnet current for 31 probes
