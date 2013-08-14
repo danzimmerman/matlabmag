@@ -46,11 +46,11 @@ end;
 
 % *** HCN ***
 % number of Gauss coefficients to retrieve
- lmax = input('Give maximum degree to invert for (l<=4) \n');
- ncoef = lmax*(lmax+2); % (no monopole, l=0)
+ %lmax = input('Give maximum degree to invert for (l<=4) \n');
+ %ncoef = lmax*(lmax+2); % (no monopole, l=0)
 %
-%lmax = 4
-%ncoef = lmax*(lmax+2);
+lmax = 4
+ncoef = lmax*(lmax+2);
 
 
 if(ischar(debiasedhalldata))

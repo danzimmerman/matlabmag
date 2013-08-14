@@ -1,21 +1,21 @@
 %notes: realized that initial point cloud is drifting at \omega when it should really drift at \omega/m
 %here's a new top view glatzmaier colors 
 set(0,'defaultfigurevisible','off');
-load /data/3m/111512/movRo1p5/moviegdata.mat
+load /data/3m/101012/movies/fullsamp_ron1p2_S3p9.mat
 KT = 1:length(tdd);
 gf = gdd(KT,:); %
 tq = tdd(KT,:);
 SAVEDATFILES = 0; %set to 1 for saving, 0 for not
-DSFAC = 1;
-NSPHERE = 6;
+DSFAC = 10;
+NSPHERE = 8;
 gd = downsample(gf,DSFAC);
 td = downsample(tq,DSFAC);
-DIRNAME = '/data/3m/111512/movRo1p5/spag3';
+DIRNAME = '/data/3m/101012/movies/tube1';
 AXLIMTOP=5;
 AXLIMSIDE = 3;
 STEPSIZE = 0.01; %field line integration step size
 NEGINTFAC = 1; %factor for inward integration
-NSTART = 134; %if you need to pause and restart
+NSTART = 1; %if you need to pause and restart
 if exist(DIRNAME)
 	cd(DIRNAME)
 	system(['cp /home/axl/matlabgit/mag/tubemovscript.m ' DIRNAME '/thisinstance_tubemovscript.m'])
@@ -37,9 +37,9 @@ if ~(exist('dave'))
 end
 
 [x0 y0 z0] = sphere(NSPHERE);
-WAVEFREQ = 0.338; 
-m = 3;
-DRIFTDIR = -1; %(CCW from top bs3msphere)
+WAVEFREQ = 0.5778*2.25; 
+m = 2;
+DRIFTDIR = 1; %(CCW from top bs3msphere)
 NUMTIMESTEP = length(td);
 td0 = td-td(1);
 thetat = repmat(DRIFTDIR*2*pi*WAVEFREQ*td0/m,[1 size(x0)]);
