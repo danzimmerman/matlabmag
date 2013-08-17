@@ -35,6 +35,6 @@ Additional Useful Magnetic Codes
 bcart2bsph.m : takes cartesian locations x,y,z and cartesian vector field components Bx, By, Bz and outputs spherical coords & components  
 bcart2bsph_linemasks.m : same as bcart2bsph.m but also adds masks for spherical radial field >0 and <0 used to color lines by polarity  
 coilcalc.m : Biot-Savart finite element code, field at point x,y,z given a coil represented as a parametric curve xc,yc,zc and a current  
-
+selrules.m : calculates Bullard and Gellman 1954 selection rules and outputs TeX/MathJAX formatted lists of allowed couplings.
 
 
