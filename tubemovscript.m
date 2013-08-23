@@ -1,21 +1,20 @@
 %notes: realized that initial point cloud is drifting at \omega when it should really drift at \omega/m
 %here's a new top view glatzmaier colors 
 set(0,'defaultfigurevisible','off');
-load /data/3m/101012/movies/fullsamp_ron1p2_S3p9.mat
-KT = 1:length(tdd);
-gf = gdd(KT,:); %
-tq = tdd(KT,:);
-SAVEDATFILES = 0; %set to 1 for saving, 0 for not
-DSFAC = 10;
-NSPHERE = 8;
+load /data/axl/rop6data/fullsampmoviedata.mat
+gf = gf(10000:25000,:);
+tq = tq(10000:25000,:);
+SAVEDATFILES=0;
+DSFAC = 3;
+NSPHERE = 9;
 gd = downsample(gf,DSFAC);
 td = downsample(tq,DSFAC);
-DIRNAME = '/data/3m/101012/movies/tube1';
+DIRNAME = '/data/axl/rop6data/movies/tube2';
 AXLIMTOP=5;
 AXLIMSIDE = 3;
 STEPSIZE = 0.01; %field line integration step size
 NEGINTFAC = 1; %factor for inward integration
-NSTART = 1; %if you need to pause and restart
+NSTART = 5001; %if you need to pause and restart
 if exist(DIRNAME)
 	cd(DIRNAME)
 	system(['cp /home/axl/matlabgit/mag/tubemovscript.m ' DIRNAME '/thisinstance_tubemovscript.m'])
@@ -37,12 +36,15 @@ if ~(exist('dave'))
 end
 
 [x0 y0 z0] = sphere(NSPHERE);
-WAVEFREQ = 0.5778*2.25; 
+WAVEFREQ = 0.867; 
 m = 2;
-DRIFTDIR = 1; %(CCW from top bs3msphere)
+DRIFTDIR = -1; %(CCW from top bs3msphere)
 NUMTIMESTEP = length(td);
-td0 = td-td(1);
-thetat = repmat(DRIFTDIR*2*pi*WAVEFREQ*td0/m,[1 size(x0)]);
+%td0 = td-td(1);
+g21c = gf(:,5)+i*gf(:,6);
+theta21 = unwrap(angle(g21c));
+thetat = repmat(theta21,[1 size(x0)]);
+%thetat = repmat(DRIFTDIR*2*pi*WAVEFREQ*td0/m,[1 size(x0)]);
 
 x0t = ones([length(td) size(x0)]);
 y0t = ones([length(td) size(x0)]);
@@ -79,7 +81,7 @@ for j = NSTART:length(td)
 	tubecol = zeros(size(xt(:)));
 	tubecol(~isnan(maskp)) = 0.8*max(max(max(Bmag)));
 	tubecol(~isnan(maskn)) = -0.8*max(max(max(Bmag)));
-	tubeplot(xt(:),yt(:),zt(:),0.05,tubecol,10);
+	tubeplot(xt(:),yt(:),zt(:),0.04,tubecol,16);
 	shading flat
 	camlight
 	plot3([0 0],[0 0],[-1.5 1.5],'w','linewidth',3);
@@ -108,7 +110,7 @@ for j = NSTART:length(td)
     
 	tj = toc
 	ttotal = ttotal +tj
-	meant = ttotal/j
+	meant = ttotal/(j-NSTART+1)
 	j = j 
 	lt = length(td)
 	['estimated time left: ' num2str((length(td)-j) * meant/3600) ' hours']
