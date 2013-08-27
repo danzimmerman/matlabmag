@@ -18,8 +18,9 @@ eqw_coilcoords.mat : xc,yc,zc cartesian coordinates of the white equatorial coil
 ===============================================
 General Vector Spherical Harmonic Drawing Codes
 ===============================================
-For all below, Gauss coeff: [g10 g11c g11s g20 g21c g21s g22c g22s g30 ...]
-tubemovscript.m : (disorganized) plotting script for 3D tube movies.
+For all below, Gauss coeff: [g10 g11c g11s g20 g21c g21s g22c g22s g30 ... etc.]  
+tubemovscript.m : (disorganized) plotting script for 3D tube movies.  
+
 ***
 Needed for tubemovscript.m:
 *** 
