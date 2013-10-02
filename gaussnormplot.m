@@ -35,7 +35,7 @@ end
 load sphlabels.mat
 for j = 1:length(gaussindex);
 	if LFLAG
-		gaumult = l(gaussindex(j))*(l(gaussindex(j))+1)./B0; %l(l+1)
+		gaumult = l(gaussindex(j))*(l(gaussindex(j))+1)./B0; %l(l+1)/B0
 	else
 		gaumult = 1;
 	end
